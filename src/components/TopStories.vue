@@ -34,9 +34,9 @@ const fetchStories = async () => {
   }
 };
 
-const getRandomIds = (array, n) => {
-  const shuffled = array.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, n);
+const getRandomIds = (array, antalElementer) => {
+  const sorteret = array.sort(() => 0.5 - Math.random());
+  return sorteret.slice(0, antalElementer);
 };
 
 onMounted(() => {
