@@ -35,10 +35,10 @@ A simple web application built with Vue.js that fetches and displays ten random 
 
 1. **Start the development server:**
   ```bash
-   npm run serve
+   npm run dev
   ```
 
-2. **Open your web browser and go to `http://localhost:8080` to view the application.**
+2. **Open your web browser and go to `http://localhost:5173/` to view the application.**
 
 ## API Endpoints Used
 
