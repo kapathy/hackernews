@@ -6,24 +6,22 @@ const stories = ref([]);
 
 const fetchStories = async () => {
   const topStoriesEndpoint = 'https://hacker-news.firebaseio.com/v0/topstories.json';
-  const storyInfoEndpoint = 'https://hacker-news.firebaseio.com/v0/item/[id].json';
-  const authorInfoEndpoint = 'https://hacker-news.firebaseio.com/v0/user/[id].json';
 
   try {
     const response = await fetch(topStoriesEndpoint);
     const data = await response.json();
-
     const randomIds = getRandomIds(data, 10);
 
-    const storyResponses = await Promise.all(randomIds.map(id => fetch(storyInfoEndpoint.replace('[id]', id))));
-    let storyData = await Promise.all(storyResponses.map(response => response.json()));
+    let storyData = await getStoryData(randomIds);
+    const authorData = await getAuthorData(storyData);
 
-    const authorResponses = await Promise.all(storyData.map(story => fetch(authorInfoEndpoint.replace('[id]', story.by))));
-    const authorData = await Promise.all(authorResponses.map(response => response.json()));
-
-    storyData.forEach((story, index) => {
-      story.authorId = authorData[index].id;
-      story.authorKarma = authorData[index].karma;
+    storyData.map((story) => {
+      const author = authorData.find((author) => author.id === story.by);
+      if (author) {
+        story.authorId = author.id;
+        story.authorKarma = author.karma;
+      }
+      return story;
     });
 
     storyData = storyData.sort((a, b) => a.score - b.score);
@@ -33,6 +31,24 @@ const fetchStories = async () => {
     console.error('Error fetching data:', error);
   }
 };
+
+const getStoryData = async (randomIds) => {
+  const storyInfoEndpoint = 'https://hacker-news.firebaseio.com/v0/item/[id].json';
+
+  const storyResponses = await Promise.all(randomIds.map(id => fetch(storyInfoEndpoint.replace('[id]', id))));
+  const storyData = await Promise.all(storyResponses.map(response => response.json()));
+
+  return storyData;
+}
+
+const getAuthorData = async (storyData) => {
+  const authorInfoEndpoint = 'https://hacker-news.firebaseio.com/v0/user/[id].json';
+
+  const authorResponses = await Promise.all(storyData.map(story => fetch(authorInfoEndpoint.replace('[id]', story.by))));
+  const authorData = await Promise.all(authorResponses.map(response => response.json()));
+
+  return authorData;
+}
 
 const getRandomIds = (array, antalElementer) => {
   const sorteret = array.sort(() => 0.5 - Math.random());
@@ -48,12 +64,10 @@ onMounted(() => {
   <div class="container">
     <h1 class="title">Hacker News Top Stories</h1>
     <ul class="stories-grid">
-      <TopStory 
-        v-for="story in stories"
-        :key="story.id"
-        class="story-item"
-        :story=story 
-      />
+      <TopStory v-for="story in stories"
+                :key="story.id"
+                class="story-item"
+                :story=story />
     </ul>
   </div>
 </template>
