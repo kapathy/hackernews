@@ -52,7 +52,8 @@ onMounted(() => {
         v-for="story in stories"
         :key="story.id"
         class="story-item"
-        :story=story />
+        :story=story 
+      />
     </ul>
   </div>
 </template>

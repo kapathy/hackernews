@@ -38,7 +38,7 @@ A simple web application built with Vue.js that fetches and displays ten random 
    npm run dev
   ```
 
-2. **Open your web browser and go to `http://localhost:5173/` to view the application.**
+2. **Enjoy**
 
 ## API Endpoints Used
 
